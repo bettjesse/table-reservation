@@ -60,9 +60,7 @@ const Navbar = () => {
           </div>
 
           <div className="hidden lg:flex lg:items-center">
-            <Link to="/" className="text-white hover:text-blue-300 px-3 py-2 rounded-md text-sm font-medium">
-              Home
-            </Link>
+        
 
             {userInfo ? (
               <div className="ml-4 relative flex-shrink-0 z-50">
