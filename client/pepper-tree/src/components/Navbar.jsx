@@ -40,7 +40,7 @@ const Navbar = () => {
           <div className="flex items-center">
             {/* Home icon or text on mobile screens */}
             <Link to="/" className="lg:hidden text-white text-lg font-medium flex items-center mr-4">
-              <FiHome className="h-6 w-6 mr-1" /> Home
+              <FiHome className="h-6 w-6 mr-1" /> 
             </Link>
 
             {/* Logo with home navigation on larger screens */}
