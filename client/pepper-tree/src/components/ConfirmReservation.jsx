@@ -154,7 +154,7 @@ const ConfirmReservation = ({onClose }) => {
               className="absolute inset-0"
               style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '10px 10px 0 0' }} // Add dark overlay
             />
-            <p className="text-center text-white z-10">Reservation: Pepper tree</p>
+          
             <div className="absolute inset-0 flex items-center justify-center">
               {reservationData && (
                 <span className="text-blue-900 text-sm bg-white rounded-lg p-2 border border-white">
