@@ -39,7 +39,10 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
             {/* <span className="text-xl font-bold text-white logo">Logo</span> */}
+<Link to = "/">
+
             <span className="hidden lg:inline-block text-lg ml-2 text-white company-name">Table Mate</span>
+</Link>
           </div>
           <div className="-mr-2 flex items-center lg:hidden">
        
