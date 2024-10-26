@@ -45,7 +45,29 @@ console.log("i clicked the button")
       return;
     }
 
-    
+     if (!date) {
+    alert("Please select a date.");
+    return;
+  }
+
+  if (!time) {
+    alert("Please select a time.");
+    return;
+  }
+
+  const now = new Date();
+  const selectedDateTime = new Date(date);
+  selectedDateTime.setHours(time.getHours(), time.getMinutes());
+
+  if (selectedDateTime < now) {
+    alert("The reservation time must be in the future.");
+    return;
+  }
+
+  if (numberOfGuests <= 0) {
+    alert("Please enter a valid number of guests.");
+    return;
+  }
       const  reservationData = {
         date,
         time,
