@@ -31,7 +31,7 @@ const Success = () => {
               className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 text-sm rounded-lg shadow-lg flex items-center gap-2 hover:from-blue-600 hover:to-blue-800 transform hover:scale-105 transition duration-300 ease-in-out"
               onClick={handleOpenFeedback}
             >
-              <TiTick size={20} className="text-white" />
+             
               We'd Love to Hear from You
             </button>
             <Link to="/">
