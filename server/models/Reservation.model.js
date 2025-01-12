@@ -10,7 +10,7 @@ const ReservationSchema = new mongoose.Schema({
     required: true,
   },
   time: {
-    type: String,
+    type: Date,  // Store both date and time in this field
     required: true,
   },
   numberOfGuests: {
@@ -23,6 +23,7 @@ const ReservationSchema = new mongoose.Schema({
   duration: {
     type: Number,
   },
+  canceledAt: { type: Date }, // Track cancellation time
   status: {
     type: String,
     enum: ["confirmed", "pending", "canceled", "completed"],

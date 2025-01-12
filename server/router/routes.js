@@ -39,6 +39,9 @@ router.route("/redirect/google").get(controller.googleOauthHandler )
 router.route("/updateuser").put(verifyUser, controller.updateUser)
 router.route("/resetPassword").put( verifyUser, controller.resetPassword)
 router.route('/reservations/:reservationId').put(verifyUser, reservationcontroller.updateReservation)
+// Update reservation status to canceled
+router.route('/reservations/:reservationId/cancel').put(verifyUser, reservationcontroller.cancelReservation);
+
 router.route('/assigntable').put(verifyUser,verifyAdmin, reservationcontroller.assignTable)
 
 //delete methods

@@ -187,6 +187,38 @@ export const getReservationById = async (req, res) => {
     }
   };
   
+  export const cancelReservation = async (req, res) => {
+    try {
+      const { reservationId } = req.params;
+  
+      // Fetch the reservation by ID
+      const reservation = await ReservationModel.findById(reservationId);
+  
+      if (!reservation) {
+        return res.status(404).json({ error: "Reservation not found" });
+      }
+  
+      // Check if the reservation is already canceled
+      if (reservation.status === "canceled") {
+        return res.status(400).json({ error: "Reservation is already canceled" });
+      }
+  
+      // Update reservation status to 'canceled'
+      reservation.status = "canceled";
+      reservation.canceledAt = new Date(); // Optional: Track when the reservation was canceled
+  
+      // Save the updated reservation
+      await reservation.save();
+  
+      return res.status(200).json({
+        message: "Reservation canceled successfully",
+        reservation,
+      });
+    } catch (error) {
+      console.error("Error canceling reservation:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  };
   
   // Delete a reservation
   export const deleteReservation = async (req, res) => {

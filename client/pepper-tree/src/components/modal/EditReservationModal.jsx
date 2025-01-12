@@ -3,17 +3,27 @@
 import { useState } from "react";
 import { useUpdateReservationMutation } from "../../slices/reservationApiSlice";
 
-const EditReservationModal = ({ reservation, onClose }) => {
+const EditReservationModal = ({ reservation, onClose,refetch }) => {
   // Helper functions to format date and time
   const formatDate = (date) => {
     const parsedDate = new Date(date);
-    return parsedDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    const year = parsedDate.getFullYear();
+    const month = String(parsedDate.getMonth() + 1).padStart(2, '0'); // Add 1 since months are 0-indexed
+    const day = String(parsedDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
-
+  
+ 
   const formatTime = (time) => {
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Matches HH:MM (24-hour format)
-    return timeRegex.test(time) ? time : "12:00"; // Default to "12:00" if invalid
+    const parsedTime = new Date(time); // Assuming time is already in local time
+    const hours = String(parsedTime.getHours()).padStart(2, '0');
+    const minutes = String(parsedTime.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   };
+  
+  
+  
+  
   // Local state to track updated values
   const [date, setDate] = useState(formatDate(reservation.date));
   const [time, setTime] = useState(formatTime(reservation.time));
@@ -23,24 +33,35 @@ const EditReservationModal = ({ reservation, onClose }) => {
   const [updateReservation, { isLoading }] = useUpdateReservationMutation();
 
   const handleSave = async () => {
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-    if (!timeRegex.test(time)) {
-      setError("Please provide a valid time in HH:MM format.");
+    if (!date || !time || !numberOfGuests) {
+      setError("All fields are required.");
       return;
     }
+  
     try {
+      // Convert the selected local time to UTC
+      const [hour, minute] = time.split(':');
+      const updatedTime = new Date(date); // Use the selected date
+      updatedTime.setHours(hour);
+      updatedTime.setMinutes(minute);
+      updatedTime.setSeconds(0);
+  
+      // Store the time in UTC
       const updatedReservation = {
         reservationId: reservation._id,
         date,
-        time,
+        time: updatedTime.toISOString(), // Store as ISO string in UTC
         numberOfGuests,
       };
+  
       await updateReservation(updatedReservation).unwrap();
+      refetch(); // Refetch reservations
       onClose();
     } catch (error) {
       console.error("Failed to update reservation:", error);
     }
   };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
