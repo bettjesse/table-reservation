@@ -4,7 +4,7 @@ import morgan from "morgan";
 import connectDatabase from "./database/connect.js";
 import router from "./router/routes.js";
 import cron from 'node-cron';
-import { updateTableAvailability } from "./updateTableAvailability.js";
+
 import { notFound,errorHandler } from "./errorHandler/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 const app = express();
@@ -56,4 +56,4 @@ try {
   console.log("Cannot connect to the server");
 }
 
-cron.schedule('* * * * *', updateTableAvailability);
+
