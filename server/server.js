@@ -11,7 +11,11 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://table-mate.onrender.com"
+];
 app.use(
   cors({
     origin: (origin, callback) => {

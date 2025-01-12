@@ -29,5 +29,8 @@
     "nodemon": "^2.0.22",
     "otp-generator": "^4.0.1",
     "qs": "^6.11.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
