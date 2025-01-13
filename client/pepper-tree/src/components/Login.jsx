@@ -35,6 +35,7 @@ const Login = () => {
       const result = await login({ email, password }).unwrap();
 
       dispatch(setCredentials({ ...result }));
+      toast.success('Login successful!');
       navigate('/');
 
       setEmail('');

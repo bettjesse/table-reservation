@@ -25,6 +25,7 @@ router.route("/generateOTP").get(verifyUser,localVariables, controller.generateO
 router.route("/verifyOTP").get( verifyUser, controller.verifyOTP)
 router.route("/createResetSession").get(controller.createResetSession)
 router.route('/allreservations').get(verifyUser,verifyAdmin,reservationcontroller.getAllReservations)
+router.route('/users').get(verifyUser,verifyAdmin,controller.getAllUsers)
 router.route('/reservations/:id').get(reservationcontroller.getReservationById)
 router.route('/table-availability').get(verifyUser,verifyAdmin, reservationcontroller.getTableAvailability)
 router.route('/reservations/guest/:id').get(reservationcontroller.getGuestDetails)

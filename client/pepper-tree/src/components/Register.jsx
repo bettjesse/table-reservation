@@ -59,6 +59,7 @@ const Register = () => {
       const res = await register({ name, email, password:passwordValue }).unwrap();
       
     dispatch(setCredentials({...res }));
+    toast.success('Login successful!');
 
     navigate('/');
       console.log(res);

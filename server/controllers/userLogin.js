@@ -96,6 +96,7 @@ export const register = asyncHandler(async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role:user.role,
         createdAt: user.createdAt,
         msg: "logged in succesfully"
       });
@@ -150,7 +151,24 @@ res.status(200).json({user})
     }
   });
   
-  
+  // @desc    Get all users
+// @route   GET /api/users
+// @access  Admin (or any specific access control if required)
+
+export const getAllUsers = asyncHandler(async (req, res) => {
+  try {
+    const users = await UserModel.find({}).select('-password'); // Exclude passwords for security
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
   // http://localhost:8080/api/generate-otp
  
 

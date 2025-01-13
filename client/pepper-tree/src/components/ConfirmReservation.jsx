@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { useCreateReservationMutation } from '../slices/reservationApiSlice';
+import { useCreateReservationMutation, useGetMyReservationsQuery } from '../slices/reservationApiSlice';
+
 import "../index.css"
 import { setReservationData,clearReservationData } from '../slices/reservationSlice';
 
@@ -15,7 +16,7 @@ import { setReservationData,clearReservationData } from '../slices/reservationSl
 const ConfirmReservation = ({onClose }) => {
   // const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPromotionalOffersEnabled, setIsPromotionalOffersEnabled] = useState(false);
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [phone, setPhone] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
   const [buttonText, setButtonText] =useState("CONFIRM YOUR BOOKING")
 
@@ -32,15 +33,10 @@ const ConfirmReservation = ({onClose }) => {
 
 
 
-      // useEffect(()=> {
-      //   if(reservationData) {
-      //     dispatch(setReservationData(reservationData))
-      //   }
-    
-      // }, [dispatch, reservationData])
+     
 
         const [createReservation, { isLoading:isReservationLoading, isError, isSuccess }] = useCreateReservationMutation();
-       
+        const { data, isLoading,refetch } = useGetMyReservationsQuery();
 
      const formatDate = (date) => {
           const options = { weekday: 'short', month: 'long', day: 'numeric' };
@@ -66,7 +62,7 @@ const ConfirmReservation = ({onClose }) => {
   };
 
   const handlePhoneNumberChange = (event) => {
-    setPhoneNumber(event.target.value);
+    setPhone(event.target.value);
   };
 
 
@@ -84,17 +80,18 @@ const ConfirmReservation = ({onClose }) => {
         date,
         time,
        numberOfGuests,
-        phoneNumber,
+        phone,
         specialRequests,
       };
   
        try {
        const result = await createReservation(reservation);
+       refetch()
         console.log(result.data);
   //       // Handle the success response
   
   //       // Empty the fields
-        setPhoneNumber('');
+        setPhone('');
         setSpecialRequests('');
        dispatch(clearReservationData())
         // Navigate to the success page
@@ -203,10 +200,11 @@ const ConfirmReservation = ({onClose }) => {
                   Phone Number
                 </label>
                 <input
+                required
                   id="phoneNumber"
                   type="text"
                   className="border border-gray-300 px-3 py-2 rounded-md w-full"
-                  value={phoneNumber}
+                  value={phone}
                   onChange={handlePhoneNumberChange}
                 />
               </div>

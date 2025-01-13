@@ -23,6 +23,10 @@ const ReservationSchema = new mongoose.Schema({
   duration: {
     type: Number,
   },
+  phone: {  // Add phone number directly in the Reservation schema
+    type: String,
+    required: false,  // Optional or you can make it required based on your needs
+  },
   canceledAt: { type: Date }, // Track cancellation time
   status: {
     type: String,
