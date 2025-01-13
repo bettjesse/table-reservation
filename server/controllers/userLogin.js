@@ -84,8 +84,8 @@ export const register = asyncHandler(async (req, res) => {
   
       res.cookie('jwt', token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'strict', // Prevent CSRF attacks
+        secure: process.env.NODE_ENV === 'production', // Dynamically set based on environment
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Cross-origin support in production, lax in development
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       });
   
