@@ -42,13 +42,13 @@ export const register = asyncHandler(async (req, res) => {
       expiresIn: '30d',
     });
 
-    res.cookie('jwt', token, {
+    res.cookie("jwt", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'strict', // Prevent CSRF attacks
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days 
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Allow cross-origin cookies in production
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
-
+    
     res.status(201).json({
       _id: user._id,
       email: user.email,
