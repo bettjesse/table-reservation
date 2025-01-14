@@ -75,7 +75,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "https://table-mate.onrender.com",
- " https://table-mate-dashboard.onrender.com"
+ "https://table-mate-dashboard.onrender.com"
 ];
 app.use(
   cors({
