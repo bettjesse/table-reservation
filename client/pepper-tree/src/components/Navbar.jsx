@@ -94,10 +94,16 @@ const Navbar = () => {
                     </Link>
                     <hr />
                     {userInfo.role === 'admin' && (
-                      <Link to="/admin/dashboard" className="w-full text-left block py-4 text-sm text-gray-700 hover:bg-gray-100">
-                        Dashboard
-                      </Link>
-                    )}
+  <a
+    href="https://table-mate-dashboard.onrender.com"
+    className="w-full text-left block py-4 text-sm text-gray-700 hover:bg-gray-100"
+    target="_blank" // Optional, to open in a new tab
+    rel="noopener noreferrer" // Optional, for security
+  >
+    Dashboard
+  </a>
+)}
+
                     <Link to="/user/reservations-dashboard" className="w-full text-left block py-4 text-sm text-gray-700 hover:bg-gray-100">
                       My Reservations
                     </Link>

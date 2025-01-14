@@ -120,101 +120,102 @@ export const getReservationById = async (req, res) => {
   // Create a new reservation
   
  
-  // export async function createReservation(req, res) {
-  //   try {
-  //     const { date, time, numberOfGuests, specialRequests, duration } = req.body;
+  export async function createReservation(req, res) {
+    try {
+      const { date, time, numberOfGuests, specialRequests, duration, phone } = req.body;
   
-  //     if (!req.user || !req.user._id) {
-  //       return res.status(401).send({ error: "Unauthorized: User not authenticated" });
-  //     }
+      if (!req.user || !req.user._id) {
+        return res.status(401).send({ error: "Unauthorized: User not authenticated" });
+      }
   
-  //     const userId = req.user._id;
-  //     const user = await UserModel.findById(userId);
+      const userId = req.user._id;
+      const user = await UserModel.findById(userId);
   
-  //     if (!user) {
-  //       return res.status(401).send({ error: "Unauthorized: User not found" });
-  //     }
+      if (!user) {
+        return res.status(401).send({ error: "Unauthorized: User not found" });
+      }
   
-  //     const reservation = new ReservationModel({
-  //       user: userId,
-  //       date,
-  //       time,
-  //       numberOfGuests,
-  //       specialRequests,
-  //       duration,
-  //     });
+      const reservation = new ReservationModel({
+        user: userId,
+        date,
+        time,
+        numberOfGuests,
+        specialRequests,
+        duration,
+        phone
+      });
   
-  //     await reservation.save();
+      await reservation.save();
   
-  //     return res.status(201).send({
-  //       message: "Reservation created successfully",
-  //       reservation,
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res.status(500).send({ error: "Internal server error" });
-  //   }
-  // }
+      return res.status(201).send({
+        message: "Reservation created successfully",
+        reservation,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({ error: "Internal server error" });
+    }
+  }
   
   //create reservation with websockets 
   
 
-export async function createReservation(req, res) {
-  try {
-    const { date, time, numberOfGuests, specialRequests, duration, phone } = req.body;
+// export async function createReservation(req, res) {
+//   try {
+//     const { date, time, numberOfGuests, specialRequests, duration, phone } = req.body;
 
-    if (!req.user || !req.user._id) {
-      return res.status(401).send({ error: "Unauthorized: User not authenticated" });
-    }
+//     if (!req.user || !req.user._id) {
+//       return res.status(401).send({ error: "Unauthorized: User not authenticated" });
+//     }
 
-    const userId = req.user._id;
-    const user = await UserModel.findById(userId);
+//     const userId = req.user._id;
+//     const user = await UserModel.findById(userId);
 
-    if (!user) {
-      return res.status(401).send({ error: "Unauthorized: User not found" });
-    }
+//     if (!user) {
+//       return res.status(401).send({ error: "Unauthorized: User not found" });
+//     }
 
-    const reservation = new ReservationModel({
-      user: userId,
-      date,
-      time,
-      numberOfGuests,
-      specialRequests,
-      duration,
-      phone
-    });
+//     const reservation = new ReservationModel({
+//       user: userId,
+//       date,
+//       time,
+//       numberOfGuests,
+//       specialRequests,
+//       duration,
+//       phone
+//     });
 
-    await reservation.save();
+//     await reservation.save();
 
-    // Notify all connected WebSocket clients
-    wss.clients.forEach((client) => {
-      if (client.readyState === client.OPEN) {
-        client.send(
-          JSON.stringify({
-            type: "NEW_RESERVATION",
-            data: {
-              reservationId: reservation._id,
-              date,
-              time,
-              numberOfGuests,
-              specialRequests,
-              phone,
-              user: user.name,
-            },
-          })
-        );
-      }
-    });
+//     // Notify all connected WebSocket clients
+//     wss.clients.forEach((client) => {
+//       if (client.readyState === client.OPEN) {
+//         client.send(
+//           JSON.stringify({
+//             type: "NEW_RESERVATION",
+//             data: {
+//               reservationId: reservation._id,
+//               date,
+//               time,
+//               numberOfGuests,
+//               specialRequests,
+//               phone,
+//               user: user.name,
+//             },
+//           })
+//         );
+//       }
+//     });
 
-    return res.status(201).send({
-      message: "Reservation created successfully",
-      reservation,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send({ error: "Internal server error" });
-  }
-}
+//     return res.status(201).send({
+//       message: "Reservation created successfully",
+//       reservation,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).send({ error: "Internal server error" });
+//   }
+// }
 
  
 
