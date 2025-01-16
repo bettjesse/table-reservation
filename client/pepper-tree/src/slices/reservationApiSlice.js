@@ -8,12 +8,21 @@ export const reservationApiSlice = apiSlice.injectEndpoints({
 
     createReservation: builder.mutation({
       query: (data) => ({
-        url: "/api/reservations",
+        url: "/api/reservation",
         method: 'POST',
         body: data,
         credentials: 'include',
       }),
     }),
+    checkTableAvailability: builder.mutation({
+      query: (data) => ({
+        url: "/api/table-availability",
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+    }),
+    
 
     getMyReservations: builder.query({
       query: () => ({
@@ -46,6 +55,7 @@ export const {
   useGetMyReservationsQuery,
   useUpdateReservationMutation, 
   useCancelReservationMutation,
+  useCheckTableAvailabilityMutation
 } = reservationApiSlice;
 
 

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-
-
 import { useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
 import { setReservationData } from "../slices/reservationSlice";
@@ -9,16 +7,11 @@ import {
   AiOutlineArrowLeft,
   AiOutlineArrowRight,
 } from "react-icons/ai";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import "../index.css";
-import ConfirmReservation from "./ConfirmReservation";
-
+import TableAvailability from "./reservations/TableAvailability";
 const CreateReservation = () => {
   const { userInfo } = useSelector((state) => state.auth);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [numberOfGuests, setNumberOfGuests] = useState(0);
+ 
+ 
 
   const [activeSection, setActiveSection] = useState("popular");
   const [showMenuOption, setShowMenuOption] = useState("");
@@ -27,62 +20,14 @@ const CreateReservation = () => {
   const [currentImage, setCurrentImage] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
+
   const today = new Date()
 
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
-  const handleCreateReservation = async (e) => {
-    e.preventDefault();
-console.log("i clicked the button")
-    if (!userInfo) {
-      
 
-      // Redirect to login page
- navigate("/login");
-      return;
-    }
-
-     if (!date) {
-    alert("Please select a date.");
-    return;
-  }
-
-  if (!time) {
-    alert("Please select a time.");
-    return;
-  }
-
-  const now = new Date();
-  const selectedDateTime = new Date(date);
-  selectedDateTime.setHours(time.getHours(), time.getMinutes());
-
-  if (selectedDateTime < now) {
-    alert("The reservation time must be in the future.");
-    return;
-  }
-
-  if (numberOfGuests <= 0) {
-    alert("Please enter a valid number of guests.");
-    return;
-  }
-      const  reservationData = {
-        date,
-        time,
-        numberOfGuests,
-      };
-      // localStorage.setItem("reservationData", JSON.stringify(reservationData));
-
-   dispatch(setReservationData(  reservationData))
-navigate("/confirm")
-      // Reset the form fields
-      setDate("");
-      setTime("");
-      setNumberOfGuests(0);
-    
-  };
 
   const scrollToSection = (section) => {
     const element = document.getElementById(section);
@@ -134,22 +79,15 @@ navigate("/confirm")
     }
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-  // const  reservationData = {
-  //   date:date,
-  //   time: time,
-  //   numberOfGuests: numberOfGuests,
-  // };
+
+  
+ 
   const activeColor = "#941C2F";
   function formatTime(time) {
     const options = { hour: "numeric", minute: "2-digit", hour12: true };
     return time.toLocaleTimeString([], options).replace(/^0(\d+)/, "$1");
   }
+
 
   return (
     <div className="">
@@ -538,96 +476,8 @@ navigate("/confirm")
               </div>
             </section>
           </div>
-          {/* Right Section */}
-          <div className="w-full lg:w-1/3">
-            {/* Reservation Form Modal */}
-            <div className="sticky top-0">
-              <div className="bg-white rounded-md shadow-md p-6">
-                <h1
-                  className="text-2xl font-bold mb-4"
-                  style={{ color: "#941C2F" }}
-                >
-                  Create Reservation
-                </h1>
-                <form onSubmit={handleCreateReservation}>
-                  {/* Date */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="date"
-                      className="block text-gray-700 font-bold mb-2"
-                    >
-                      Date:
-                    </label>
-                    <DatePicker
-                      id="date"
-                      selected={date}
-                      onChange={(date) => setDate(date)}
-                      className="w-full border-none border-b-2 border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500"
-                      placeholderText="Select date"
-                      dateFormat="yyyy-MM-dd"
-                      minDate={today}
-                    />
-                  </div>
-
-                  {/* Time */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="time"
-                      className="block text-gray-700 font-bold mb-2"
-                    >
-                      Time:
-                    </label>
-                    <DatePicker
-                      id="time"
-                      selected={time}
-                      onChange={(time) => setTime(time)}
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={15}
-                      dateFormat="h:mm aa"
-                      className="w-full border-none border-b-2 border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500"
-                      placeholderText="Select time"
-                    />
-                  </div>
-
-                  {/* Number of Guests */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="numberOfGuests"
-                      className="block text-gray-700 font-bold mb-2"
-                    >
-                      Number of Guests:
-                    </label>
-                    <input
-                      type="number"
-                      id="numberOfGuests"
-                      value={numberOfGuests}
-                      onChange={(e) => setNumberOfGuests(e.target.value)}
-                      className="w-full border-none border-b-2 border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                  type="submit"
-                    // onClick={openModal}
-                    className=" text-white rounded-md px-4 py-2"
-                    style={{ backgroundColor: "#03191E" }}
-                  >
-                    Book Table at {time ? formatTime(time) : ""}
-                  </button>
-                </form>
-                {/* {isModalOpen && (
-                  <ConfirmReservation
-                    onClose={closeModal}
-                    reservationData= { reservationData}
-                    
-                   
-                  />
-                )} */}
-              </div>
-            </div>
-          </div>
+      
+      <TableAvailability/>
         </div>
       </div>
     </div>

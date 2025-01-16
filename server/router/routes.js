@@ -16,8 +16,8 @@ router.route('/registerMail').post(registerMail)
 router.route("/authenticate").post()
 router.route("/login").post(controller.login)
 router.route("/logout").post(controller.logoutUser)
-
-router.route("/reservations").post(verifyUser,reservationcontroller.createReservation)
+router.route('/table-availability').post(verifyUser, reservationcontroller.checkTableAvailability)
+router.route("/reservation").post(verifyUser,reservationcontroller.createReservation)
 
 //get methods
 router.route("/user").get( verifyUser, controller.getUser)
@@ -27,7 +27,7 @@ router.route("/createResetSession").get(controller.createResetSession)
 router.route('/allreservations').get(verifyUser,verifyAdmin,reservationcontroller.getAllReservations)
 router.route('/users').get(verifyUser,verifyAdmin,controller.getAllUsers)
 router.route('/reservations/:id').get(reservationcontroller.getReservationById)
-router.route('/table-availability').get(verifyUser,verifyAdmin, reservationcontroller.getTableAvailability)
+
 router.route('/reservations/guest/:id').get(reservationcontroller.getGuestDetails)
 router.route('/my-reservations').get( verifyUser, reservationcontroller.getCustomerReservations)
 router.route("/reservations/report").get(reservationcontroller.getReservationReport)

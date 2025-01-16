@@ -20,6 +20,8 @@ import Success from './components/Succes';
 import FeedBack from './components/FeedBack';
 
 
+
+
 const App = () => {
  
   const { data, isLoading: isUserLoading } = useGetUserProfileQuery();
@@ -54,7 +56,7 @@ const App = () => {
             <Route path="/feedback" element={<FeedBack />} />
             <Route path="/success" element={<Success />} />
             <Route path="/dashboard" element={<Success />} />
-            {/* Add more routes as needed */}
+            
           </Routes>
         </div>
         <Footer />

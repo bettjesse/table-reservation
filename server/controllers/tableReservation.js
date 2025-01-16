@@ -5,11 +5,20 @@ import UserModel from "../models/User.model.js";
 import TableModel from "../models/Table.model.js";
 
 
-//create table 
+
 
 export async function createTable(req, res) {
   try {
     const { tableNumber, capacity } = req.body;
+
+    if (!tableNumber || !capacity) {
+      return res.status(400).send({ error: "Table number and capacity are required" });
+    }
+
+    const existingTable = await TableModel.findOne({ tableNumber });
+    if (existingTable) {
+      return res.status(400).send({ error: "Table number already exists" });
+    }
 
     const table = new TableModel({
       tableNumber,
@@ -19,14 +28,144 @@ export async function createTable(req, res) {
     await table.save();
 
     return res.status(201).send({
-      message: 'Table created successfully',
+      message: "Table created successfully",
       table,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ error: 'Internal server error' });
+    return res.status(500).send({ error: "Internal server error" });
   }
 }
+
+// export async function checkTableAvailability(req, res) {
+//   try {
+//     const { date, time, partySize } = req.body;
+
+//     // Validate inputs
+//     if (!date || !time || !partySize) {
+//       return res.status(400).json({ error: "Date, time, and party size are required." });
+//     }
+
+//     // Find tables with the required capacity
+//     const suitableTables = await TableModel.find({ capacity: { $gte: partySize } });
+
+//     if (suitableTables.length === 0) {
+//       return res.status(404).json({ message: "No suitable tables found for the given party size." });
+//     }
+
+//     // Parse the reservation start and end times
+//     const reservationStartTime = new Date(`${date}T${time}:00.000Z`);
+//     const reservationDuration = 4 * 60 * 60 * 1000; // 4 hours
+//     const reservationEndTime = new Date(reservationStartTime.getTime() + reservationDuration);
+
+//     // Define buffer time (e.g., 10 minutes)
+//     const bufferTime = 10 * 60 * 1000;
+
+//     // Check for tables with overlapping reservations
+//     const reservedTables = await ReservationModel.find({
+//       assignedTable: { $in: suitableTables.map((table) => table._id) },
+//       $or: [
+//         // Case 1: Existing reservations overlap with the new reservation's time window
+//         {
+//           $and: [
+//             { time: { $lte: new Date(reservationEndTime.getTime() + bufferTime) } },
+//             { time: { $gte: new Date(reservationStartTime.getTime() - bufferTime) } },
+//           ],
+//         },
+//         // Case 2: Existing reservations start during the new reservation
+//         {
+//           $and: [
+//             { time: { $gte: reservationStartTime } },
+//             { time: { $lte: reservationEndTime } },
+//           ],
+//         },
+//       ],
+//     });
+
+//     const reservedTableIds = reservedTables.map((reservation) => reservation.assignedTable.toString());
+
+//     // Filter out tables that are reserved
+//     const availableTables = suitableTables.filter(
+//       (table) => !reservedTableIds.includes(table._id.toString())
+//     );
+
+//     if (availableTables.length === 0) {
+//       return res.status(404).json({ message: "No available tables for the selected time." });
+//     }
+// console.log("AVAILABLE TABLE NUMBER", availableTables.length)
+//     return res.status(200).json({ message: "Tables available.", availableTables });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: "Internal server error." });
+//   }
+// }
+
+export async function checkTableAvailability(req, res) {
+  try {
+    const { date, time, partySize } = req.body;
+
+    // Validate inputs
+    if (!date || !time || !partySize) {
+      return res.status(400).json({ error: "Date, time, and party size are required." });
+    }
+
+    // Find tables with the required capacity
+    const suitableTables = await TableModel.find({ capacity: { $gte: partySize } });
+
+    if (suitableTables.length === 0) {
+      return res.status(404).json({ message: "No suitable tables found for the given party size." });
+    }
+
+    // Parse the reservation start and end times
+    const reservationStartTime = new Date(`${date}T${time}:00.000Z`);
+    const reservationDuration = 4 * 60 * 60 * 1000; // 4 hours
+    const reservationEndTime = new Date(reservationStartTime.getTime() + reservationDuration);
+
+    // Define buffer time (e.g., 10 minutes)
+    const bufferTime = 10 * 60 * 1000;
+
+    // Check for tables with overlapping reservations
+    const reservedTables = await ReservationModel.find({
+      assignedTable: { $in: suitableTables.map((table) => table._id) },
+      $or: [
+        // Check if the new reservation overlaps with any existing reservations
+        {
+          $and: [
+            { time: { $lt: new Date(reservationEndTime.getTime() + bufferTime) } },
+            { time: { $gte: new Date(reservationStartTime.getTime() - reservationDuration - bufferTime) } },
+          ],
+        },
+      ],
+    });
+
+    const reservedTableIds = reservedTables.map((reservation) => reservation.assignedTable.toString());
+
+    // Filter out tables that are reserved
+    const availableTables = suitableTables.filter(
+      (table) => !reservedTableIds.includes(table._id.toString())
+    );
+
+    if (availableTables.length === 0) {
+      return res.status(404).json({ message: "No available tables for the selected time." });
+    }
+
+    // Sort available tables: prioritize exact matches, followed by closest matches
+    const sortedTables = availableTables.sort((a, b) => {
+      const diffA = a.capacity - partySize;
+      const diffB = b.capacity - partySize;
+      return diffA - diffB; // Smaller difference first
+    });
+
+    console.log("AVAILABLE TABLE NUMBER", sortedTables.length);
+    return res.status(200).json({ message: "Tables available.", availableTables: sortedTables });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+}
+
+//create table 
+
 
 
 // Table Assigning Controller
@@ -120,42 +259,94 @@ export const getReservationById = async (req, res) => {
   // Create a new reservation
   
  
+  // export async function createReservation(req, res) {
+  //   try {
+  //     const { date, time, partySize, specialRequests, phone, tableId } = req.body;
+  
+  //     if (!req.user || !req.user._id) {
+  //       return res.status(401).json({ error: "Unauthorized: User not authenticated." });
+  //     }
+  
+  //     // Validate the selected table
+  //     const table = await TableModel.findById(tableId);
+  
+  //     if (!table) {
+  //       return res.status(404).json({ error: "Table not found." });
+  //     }
+  
+  //     // Check if the table is already reserved for the given time
+  //     const existingReservation = await ReservationModel.findOne({
+  //       date,
+  //       time,
+  //       assignedTable: tableId,
+  //     });
+  
+  //     if (existingReservation) {
+  //       return res.status(400).json({ error: "Table is already reserved for the selected time." });
+  //     }
+  
+  //     // Create the reservation
+  //     const reservation = new ReservationModel({
+  //       user: req.user._id,
+  //       date,
+  //       time,
+  //       partySize: partySize,
+  //       specialRequests,
+  //       phone,
+  //       assignedTable: tableId,
+  //     });
+  
+  //     await reservation.save();
+  
+  //     return res.status(201).json({
+  //       message: "Reservation created successfully.",
+  //       reservation,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res.status(500).json({ error: "Internal server error." });
+  //   }
+  // }
+  
   export async function createReservation(req, res) {
     try {
-      const { date, time, numberOfGuests, specialRequests, duration, phone } = req.body;
+      const { date, time, partySize, specialRequests, phone, tableId } = req.body;
   
       if (!req.user || !req.user._id) {
-        return res.status(401).send({ error: "Unauthorized: User not authenticated" });
+        return res.status(401).json({ error: "Unauthorized: User not authenticated." });
       }
   
-      const userId = req.user._id;
-      const user = await UserModel.findById(userId);
-  
-      if (!user) {
-        return res.status(401).send({ error: "Unauthorized: User not found" });
+      // Validate the selected table
+      const table = await TableModel.findById(tableId);
+      if (!table) {
+        return res.status(404).json({ error: "Table not found." });
       }
   
+      // Directly create the reservation
+      const reservationStartTime = new Date(`${date}T${time}:00.000Z`);
       const reservation = new ReservationModel({
-        user: userId,
-        date,
-        time,
-        numberOfGuests,
+        user: req.user._id,
+        date: reservationStartTime.toISOString().split("T")[0],
+        time: reservationStartTime,
+        partySize,
         specialRequests,
-        duration,
-        phone
+        phone,
+        assignedTable: tableId,
       });
   
       await reservation.save();
   
-      return res.status(201).send({
-        message: "Reservation created successfully",
+      return res.status(201).json({
+        message: "Reservation created successfully.",
         reservation,
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).send({ error: "Internal server error" });
+      return res.status(500).json({ error: "Internal server error." });
     }
   }
+  
+  
   
   //create reservation with websockets 
   
