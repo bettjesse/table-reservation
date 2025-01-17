@@ -5,7 +5,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Mulish', 'sans-serif'], // Set Mulish as the default sans-serif font
+      },
+    },
   },
   plugins: [],
-}
+};
