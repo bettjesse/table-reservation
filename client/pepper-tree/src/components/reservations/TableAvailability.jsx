@@ -2,16 +2,17 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { FaCalendarAlt, FaClock, FaUserFriends } from "react-icons/fa"; 
+import { useNavigate } from "react-router-dom";
 
 import { setReservationData, clearReservationData } from "../../slices/reservationSlice";
 import { useCheckTableAvailabilityMutation } from "../../slices/reservationApiSlice";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../index.css";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import dayjs from "dayjs";
 import { setAvailableTables } from "../../slices/tableSlice";
-import { useNavigate } from "react-router-dom";
+
 import Modal from "./Modal";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -25,9 +26,18 @@ const TableAvailability = () => {
 
   const dispatch = useDispatch();
   const { reservationData } = useSelector((state) => state.reservation);
+const navigate= useNavigate()
+  const user = useSelector((state) => state.auth.userInfo); // Assuming you have a user in your auth state
 
   const [checkTableAvailability, { data: availability, isLoading }] = useCheckTableAvailabilityMutation();
-  const navigate = useNavigate();
+
+  // Redirect to login if no user is present
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => Math.max(1, prev - 1));

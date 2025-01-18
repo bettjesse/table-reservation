@@ -8,7 +8,7 @@ import { useDispatch , useSelector} from 'react-redux';
 import { setCredentials } from '../slices/authSlice';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import Loader from './Loader';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -25,7 +25,7 @@ const Register = () => {
 
   const [register, { isLoading, isError, error }] = useRegisterMutation();
 
-  const {userInfo} = useSelector((state)=> state.auth)
+  const user = useSelector((state)=> state.auth.userInfo)
 
    const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,10 +33,10 @@ const Register = () => {
 
 
   useEffect(() => {
-    if (userInfo && !isError && !error) {
+    if (user && !isError && !error) {
       navigate('/');
     }
-  }, [userInfo, navigate, isError,error]);
+  }, [user, navigate, isError,error]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -81,13 +81,7 @@ const Register = () => {
     }
   };
 
-  function handleGoogleLogin() {
-    loginWithGoogle().then((user) => {
-      dispatch(setCredentials(user));
-      localStorage.setItem('userInfo', JSON.stringify(user)); // Set the user info in local storage
-      navigate('/');
-    });
-  }
+
 
   const PasswordErrorMessage = () => {
     return (
@@ -115,15 +109,7 @@ const Register = () => {
           <span className='text-tale-300'>Log in now</span>
         </Link>
       </p>
-      {/* <div className="flex items-center justify-center mb-4">
-  <button
-    className="flex items-center text-gray-900 font-bold py-2 px-4 rounded space-x-2 sm:text-lg sm:py-3 sm:px-6"
-    onClick={handleGoogleLogin}
-  >
-    <FcGoogle className="mr-6 bg bg-white text-xl" />
-    <span className="ml-2 px-4">Google</span>
-  </button>
-</div> */}
+   
 
         <div className="flex items-center justify-center mb-4">
   <hr className="w-1/4 border-gray-300 my-0" />
@@ -220,12 +206,12 @@ const Register = () => {
     </div>
 
     <button
-      type="submit"
-      disabled={isLoading }
-      className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded w-full"
-    >
-  Sign up
-    </button>
+  type="submit"
+  disabled={isLoading}
+  className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded w-full"
+>
+  {isLoading ? "Signing up..." : "Sign up"}
+</button>
     
   </div>
 </form>
