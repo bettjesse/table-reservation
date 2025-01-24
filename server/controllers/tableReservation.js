@@ -37,68 +37,7 @@ export async function createTable(req, res) {
   }
 }
 
-// export async function checkTableAvailability(req, res) {
-//   try {
-//     const { date, time, partySize } = req.body;
 
-//     // Validate inputs
-//     if (!date || !time || !partySize) {
-//       return res.status(400).json({ error: "Date, time, and party size are required." });
-//     }
-
-//     // Find tables with the required capacity
-//     const suitableTables = await TableModel.find({ capacity: { $gte: partySize } });
-
-//     if (suitableTables.length === 0) {
-//       return res.status(404).json({ message: "No suitable tables found for the given party size." });
-//     }
-
-//     // Parse the reservation start and end times
-//     const reservationStartTime = new Date(`${date}T${time}:00.000Z`);
-//     const reservationDuration = 4 * 60 * 60 * 1000; // 4 hours
-//     const reservationEndTime = new Date(reservationStartTime.getTime() + reservationDuration);
-
-//     // Define buffer time (e.g., 10 minutes)
-//     const bufferTime = 10 * 60 * 1000;
-
-//     // Check for tables with overlapping reservations
-//     const reservedTables = await ReservationModel.find({
-//       assignedTable: { $in: suitableTables.map((table) => table._id) },
-//       $or: [
-//         // Case 1: Existing reservations overlap with the new reservation's time window
-//         {
-//           $and: [
-//             { time: { $lte: new Date(reservationEndTime.getTime() + bufferTime) } },
-//             { time: { $gte: new Date(reservationStartTime.getTime() - bufferTime) } },
-//           ],
-//         },
-//         // Case 2: Existing reservations start during the new reservation
-//         {
-//           $and: [
-//             { time: { $gte: reservationStartTime } },
-//             { time: { $lte: reservationEndTime } },
-//           ],
-//         },
-//       ],
-//     });
-
-//     const reservedTableIds = reservedTables.map((reservation) => reservation.assignedTable.toString());
-
-//     // Filter out tables that are reserved
-//     const availableTables = suitableTables.filter(
-//       (table) => !reservedTableIds.includes(table._id.toString())
-//     );
-
-//     if (availableTables.length === 0) {
-//       return res.status(404).json({ message: "No available tables for the selected time." });
-//     }
-// console.log("AVAILABLE TABLE NUMBER", availableTables.length)
-//     return res.status(200).json({ message: "Tables available.", availableTables });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: "Internal server error." });
-//   }
-// }
 
 export async function checkTableAvailability(req, res) {
   try {
